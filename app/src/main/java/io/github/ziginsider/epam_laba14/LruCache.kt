@@ -1,5 +1,11 @@
 package io.github.ziginsider.epam_laba14
 
+/**
+ * A LRU Cache implementation
+ *
+ * @author Alex Kisel
+ * @since 2018-05-03
+ */
 open class LruCache<in K, V>(capacity: Int = 10): Cache<K, V> {
     override fun put(key: K, value: V): Boolean {
 
@@ -20,5 +26,4 @@ open class LruCache<in K, V>(capacity: Int = 10): Cache<K, V> {
     override fun getMaxSize(): Int {
 
     }
-
 }
