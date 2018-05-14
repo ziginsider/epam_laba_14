@@ -12,7 +12,7 @@ interface Cache<in K, V> {
      *
      * @param key key (url)
      * @param value value (image)
-     * @return true if operation was successful, false - otherwise
+     * @return true if operation was successful, false - value for specified key already exists
      */
     fun put(key: K, value: V): Boolean
 
@@ -28,9 +28,8 @@ interface Cache<in K, V> {
      * Sets the size of the cache
      *
      * @param maxSize new size of the cache
-     * @return true if operation was successful, false - otherwise
      */
-    fun resize(maxSize: Int): Boolean
+    fun resize(maxSize: Int)
 
     /**
      * Returns the current memory size of the cache
