@@ -1,7 +1,7 @@
 package io.github.ziginsider.epam_laba14
 
 /**
- * A LRU Cache implementation
+ * An implementation of LRU cache
  *
  * @author Alex Kisel
  * @since 2018-05-03
@@ -56,5 +56,8 @@ open class LruCache<in K, V>(capacity: Int = 10) : Cache<K, V> {
 
     override fun getMaxSize() = maxCacheSize
 
+    /**
+     * Gets [value] size in bytes
+     */
     protected open fun getValueSize(value: V) = 1024 * 1024
 }

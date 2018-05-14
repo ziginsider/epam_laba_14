@@ -27,19 +27,19 @@ interface Cache<in K, V> {
     /**
      * Sets the size of the cache
      *
-     * @param maxSize new size of the cache
+     * @param maxSize new size of the cache in bytes
      */
     fun resize(maxSize: Int)
 
     /**
-     * Returns the current memory size of the cache
+     * Returns the current memory size of the cache in bytes
      *
      * @return current memory size of the cache
      */
     fun getCurrentSize(): Int
 
     /**
-     * Returns the max memory size of the cache
+     * Returns the max memory size of the cache in bytes
      *
      * @return max memory size of the cache
      */
