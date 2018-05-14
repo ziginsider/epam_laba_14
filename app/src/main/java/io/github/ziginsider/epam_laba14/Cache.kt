@@ -20,9 +20,9 @@ interface Cache<in K, V> {
      * Get the value for the [key]
      *
      * @param key key (url)
-     * @return value (image) for the specified [key]
+     * @return value (image) for the specified [key] or null
      */
-    fun get(key: K): V
+    fun get(key: K): V?
 
     /**
      * Sets the size of the cache
