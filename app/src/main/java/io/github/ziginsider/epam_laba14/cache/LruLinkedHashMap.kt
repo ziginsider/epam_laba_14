@@ -1,4 +1,4 @@
-package io.github.ziginsider.epam_laba14
+package io.github.ziginsider.epam_laba14.cache
 
 /**
  * LinkedHashMap implementation for LRU cache (accessOrder = true)
