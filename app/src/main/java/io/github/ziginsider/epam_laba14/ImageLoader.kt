@@ -3,9 +3,7 @@ package io.github.ziginsider.epam_laba14
 import android.graphics.Bitmap
 import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutorCompletionService
-import java.util.concurrent.ExecutorService
+import java.util.concurrent.*
 
 object ImageLoader {
 
@@ -53,7 +51,7 @@ object ImageLoader {
     }
 
     private class DownloadCompletionService(private val executor: ExecutorService)
-        : ExecutorCompletionService(executor) {
+        : ExecutorCompletionService<Bitmap>(executor) {
 
         fun shutdown() {
             executor.shutdown()
@@ -62,5 +60,23 @@ object ImageLoader {
         fun isTerminated() = executor.isTerminated
     }
 
+    private class ConsumerThread(val executorService: DownloadCompletionService) : Thread() {
+
+        override fun run() {
+            super.run()
+            try {
+                while (!executorService.isTerminated()) {
+                    val future = executorService.poll(1, TimeUnit.SECONDS)
+                    future?.let {
+                        addImage(it.get())
+                    }
+                }
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+            }
+        }
+    }
 
 }
