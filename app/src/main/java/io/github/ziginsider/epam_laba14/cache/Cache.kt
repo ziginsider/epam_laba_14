@@ -27,9 +27,16 @@ interface Cache<in K, V> {
     /**
      * Sets the size of the cache
      *
-     * @param maxSize new size of the cache in bytes
+     * @param newSize new size of the cache in bytes
      */
-    fun resize(maxSize: Int)
+    fun resize(newSize: Int)
+
+    /**
+     * Sets the capacity (number of elements) of the cache
+     *
+     * @param newCapacity new capacity of the cache
+     */
+    fun setCapacity(newCapacity: Int)
 
     /**
      * Returns the current memory size of the cache in bytes

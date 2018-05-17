@@ -6,9 +6,9 @@ package io.github.ziginsider.epam_laba14.cache
  * @author Alex Kisel
  * @since 2018-05-03
  */
-open class LruCache<in K, V>(capacity: Int = 10) : Cache<K, V> {
+open class LruCache<in K, V>(private var capacity: Int = 10) : Cache<K, V> {
 
-    private val lruMap: LruLinkedHashMap<K, V>
+    private var lruMap: LruLinkedHashMap<K, V>
     private var currentCacheSize: Int
     private var maxCacheSize: Int
 
@@ -36,11 +36,11 @@ open class LruCache<in K, V>(capacity: Int = 10) : Cache<K, V> {
 
     override fun get(key: K) = lruMap[key]
 
-    override fun resize(maxSize: Int) {
-        if (maxSize <= 0) {
+    override fun resize(newSize: Int) {
+        if (newSize <= 0) {
             throw IllegalArgumentException("[ LRU Cache's capacity must be positive ]")
         }
-        maxCacheSize = maxSize
+        maxCacheSize = newSize
         while (true) {
             if (currentCacheSize <= maxCacheSize || lruMap.isEmpty()) {
                 break
@@ -49,6 +49,15 @@ open class LruCache<in K, V>(capacity: Int = 10) : Cache<K, V> {
             //TODO val oldestValue = lruMap.entries.first() ??
             lruMap.remove(oldestValue.key)
             currentCacheSize -= getValueSize(oldestValue.value)
+        }
+    }
+
+    override fun setCapacity(newCapacity: Int) {
+        val tempLruMap = lruMap
+        lruMap = LruLinkedHashMap(newCapacity)
+        maxCacheSize = newCapacity * 1024 * 1024
+        if (tempLruMap.size > 0) {
+            lruMap.putAll(tempLruMap)
         }
     }
 
