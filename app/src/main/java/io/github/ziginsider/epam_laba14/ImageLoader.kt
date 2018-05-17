@@ -13,13 +13,18 @@ object ImageLoader {
     //TODO set capacity?
     private val cache = ImageCache(10)
 
+    private val threadPool: DownloadCompletionService? = null
+
     private var threadCount: Int? = null
+        get() = field ?: Runtime.getRuntime().availableProcessors() * 2
 
     fun displayImage(view: ImageView, url: String) {
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
                 //TODO start downloading... value = ...
+
+
                 cache.put(url, value)
             } else {
                 addImage(view, bitmap)
