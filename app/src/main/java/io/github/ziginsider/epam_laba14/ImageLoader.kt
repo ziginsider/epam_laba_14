@@ -1,7 +1,9 @@
 package io.github.ziginsider.epam_laba14
 
+import android.graphics.Bitmap
 import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
+import java.util.concurrent.Callable
 
 object ImageLoader {
 
@@ -27,12 +29,26 @@ object ImageLoader {
         cache.resize(newSize)
     }
 
+    fun capacityCache(newCapacity: Int) {
+        cache.setCapacity(newCapacity)
+    }
+
     fun threadCount(newCount: Int) {
         threadCount = newCount
     }
 
-    fun capacityCache(newCapacity: Int) {
-        cache.setCapacity(newCapacity)
+    private inner class ImageDownloadTask(val url: String) : Callable<Bitmap> {
+
+        override fun call(): Bitmap {
+            return downloadImage(url)
+        }
+
+        private fun downloadImage(url: String): Bitmap {
+            //TODO downloading image
+
+            
+        }
     }
+
 
 }
