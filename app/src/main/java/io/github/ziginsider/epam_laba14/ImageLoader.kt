@@ -1,6 +1,5 @@
 package io.github.ziginsider.epam_laba14
 
-import android.app.Application
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
@@ -13,17 +12,19 @@ object ImageLoader {
     //TODO set capacity?
     private val cache = ImageCache(10)
 
-    private val threadPool: DownloadCompletionService? = null
-
     private var threadCount: Int? = null
-        get() = field ?: Runtime.getRuntime().availableProcessors() * 2
+
+    private val threadPool: DownloadCompletionService? = null
+        get() = field ?: DownloadCompletionService(Executors.newFixedThreadPool(threadCount
+                ?: Runtime.getRuntime().availableProcessors() * 2))
 
     fun displayImage(view: ImageView, url: String) {
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
                 //TODO start downloading... value = ...
-
+                ConsumerThread(threadPool!!).start()
+                threadPool!!.submit(ImageDownloadTask(url))
 
                 cache.put(url, value)
             } else {
@@ -50,13 +51,13 @@ object ImageLoader {
         }
     }
 
-    private class ImageDownloadTask(val url: String) : Callable<Bitmap> {
+    private class ImageDownloadTask(val url: String, val view: ImageView) : Callable<Image> {
 
-        override fun call(): Bitmap {
-            return downloadImage(url)
+        override fun call(): Image {
+            return downloadImage(url, view)
         }
 
-        private fun downloadImage(url: String): Bitmap {
+        private fun downloadImage(url: String, view: ImageView): Image {
             //TODO downloading image
 
 
@@ -64,7 +65,7 @@ object ImageLoader {
     }
 
     private class DownloadCompletionService(private val executor: ExecutorService)
-        : ExecutorCompletionService<Bitmap>(executor) {
+        : ExecutorCompletionService<Image>(executor) {
 
         fun shutdown() {
             executor.shutdown()
@@ -81,7 +82,9 @@ object ImageLoader {
                 while (!executorService.isTerminated()) {
                     val future = executorService.poll(1, TimeUnit.SECONDS)
                     future?.let {
-                        addImage(it.get())
+                        val image = it.get()
+                        addImage(image.view, image.bitmap)
+                        cache.put(image.url, image.bitmap)
                     }
                 }
             } catch (e: InterruptedException) {
@@ -91,7 +94,6 @@ object ImageLoader {
             }
         }
     }
-
 
 
 }
