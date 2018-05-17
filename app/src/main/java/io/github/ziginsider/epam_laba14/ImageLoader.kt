@@ -4,6 +4,8 @@ import android.graphics.Bitmap
 import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
 import java.util.concurrent.Callable
+import java.util.concurrent.ExecutorCompletionService
+import java.util.concurrent.ExecutorService
 
 object ImageLoader {
 
@@ -37,7 +39,7 @@ object ImageLoader {
         threadCount = newCount
     }
 
-    private inner class ImageDownloadTask(val url: String) : Callable<Bitmap> {
+    private class ImageDownloadTask(val url: String) : Callable<Bitmap> {
 
         override fun call(): Bitmap {
             return downloadImage(url)
@@ -46,8 +48,18 @@ object ImageLoader {
         private fun downloadImage(url: String): Bitmap {
             //TODO downloading image
 
-            
+
         }
+    }
+
+    private class DownloadCompletionService(private val executor: ExecutorService)
+        : ExecutorCompletionService(executor) {
+
+        fun shutdown() {
+            executor.shutdown()
+        }
+
+        fun isTerminated() = executor.isTerminated
     }
 
 
