@@ -1,6 +1,9 @@
 package io.github.ziginsider.epam_laba14
 
+import android.app.Application
 import android.graphics.Bitmap
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
 import java.util.concurrent.*
@@ -19,8 +22,7 @@ object ImageLoader {
                 //TODO start downloading... value = ...
                 cache.put(url, value)
             } else {
-                //TODO thread??
-                view.setImageBitmap(bitmap)
+                addImage(view, bitmap)
             }
         }
     }
@@ -35,6 +37,12 @@ object ImageLoader {
 
     fun threadCount(newCount: Int) {
         threadCount = newCount
+    }
+
+    private fun addImage(view: ImageView, bitmap: Bitmap) {
+        Handler(Looper.getMainLooper()).post {
+            view.setImageBitmap(bitmap)
+        }
     }
 
     private class ImageDownloadTask(val url: String) : Callable<Bitmap> {
@@ -78,5 +86,7 @@ object ImageLoader {
             }
         }
     }
+
+
 
 }
