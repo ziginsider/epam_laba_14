@@ -38,7 +38,7 @@ open class LruCache<in K, V>(private var capacity: Int = 10) : Cache<K, V> {
 
     override fun resize(newSize: Int) {
         if (newSize <= 0) {
-            throw IllegalArgumentException("[ LRU Cache's capacity must be positive ]")
+            throw IllegalArgumentException("[ LRU Cache's size must be positive ]")
         }
         maxCacheSize = newSize
         while (true) {

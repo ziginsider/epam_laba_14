@@ -1,10 +1,15 @@
 package io.github.ziginsider.epam_laba14
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import java.util.concurrent.*
 
 object ImageLoader {
@@ -24,9 +29,9 @@ object ImageLoader {
             if (bitmap == null) {
                 //TODO start downloading... value = ...
                 ConsumerThread(threadPool!!).start()
-                threadPool!!.submit(ImageDownloadTask(url))
+                threadPool!!.submit(ImageDownloadTask(url, view))
 
-                cache.put(url, value)
+                //cache.put(url, value)
             } else {
                 addImage(view, bitmap)
             }
@@ -58,9 +63,22 @@ object ImageLoader {
         }
 
         private fun downloadImage(url: String, view: ImageView): Image {
-            //TODO downloading image
-
-
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                    .url(url)
+                    .build()
+            var response: Response? = null
+            var bitmap: Bitmap? = null
+            try {
+                response = client.newCall(request).execute()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            if (response?.isSuccessful ?: false) {
+                //TODO check
+                bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
+            }
+            return Image(view, url, bitmap)
         }
     }
 
@@ -82,9 +100,15 @@ object ImageLoader {
                 while (!executorService.isTerminated()) {
                     val future = executorService.poll(1, TimeUnit.SECONDS)
                     future?.let {
-                        val image = it.get()
-                        addImage(image.view, image.bitmap)
-                        cache.put(image.url, image.bitmap)
+                        val image = future.get()
+                        with(image) {
+                            if (bitmap != null) {
+                                addImage(view, bitmap)
+                                cache.put(url, bitmap)
+                            } else {
+                                //TODO log that image downloaded unsuccessful
+                            }
+                        }
                     }
                 }
             } catch (e: InterruptedException) {
