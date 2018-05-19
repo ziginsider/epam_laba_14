@@ -20,25 +20,30 @@ object ImageLoader {
 
     private const val DEFAULT_CAPACITY = 10
 
-    private val cache = ImageCache(DEFAULT_CAPACITY)
+    private val cache: ImageCache
+    private var threadCount: Int
+    private var threadPool: DownloadCompletionService
 
-    private var threadCount: Int? = null
-
-    private val threadPool: DownloadCompletionService? = null
-        get() = field ?: DownloadCompletionService(Executors.newFixedThreadPool(threadCount
-                ?: Runtime.getRuntime().availableProcessors() * 2))
+    init {
+        logi(TAG, "[init ImageLoader]")
+        cache = ImageCache(DEFAULT_CAPACITY)
+        threadCount = Runtime.getRuntime().availableProcessors() * 2
+        threadPool = DownloadCompletionService(Executors.newFixedThreadPool(threadCount))
+        ConsumerThread(threadPool).start()
+    }
 
     fun displayImage(view: ImageView, url: String) {
         logi(TAG, "[ displayImage($view, $url) ]")
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
-                //TODO start downloading... value = ...
-                ConsumerThread(threadPool!!).start()
-                threadPool!!.submit(ImageDownloadTask(url, view))
+                logi(TAG, "[ start image downloading task]")
+                //ConsumerThread(threadPool).start()
+                threadPool.submit(ImageDownloadTask(url, view))
 
                 //cache.put(url, value)
             } else {
+                logi(TAG, "[ add image from cache ]")
                 addImage(view, bitmap)
             }
         }
@@ -60,7 +65,7 @@ object ImageLoader {
     }
 
     private fun addImage(view: ImageView, bitmap: Bitmap) {
-        logi(TAG, "[ addImage() ]")
+        logi(TAG, "[ addImage($view, $bitmap) ]")
         Handler(Looper.getMainLooper()).post {
             view.setImageBitmap(bitmap)
         }
@@ -87,11 +92,13 @@ object ImageLoader {
                 e.printStackTrace()
             }
             if (response?.isSuccessful ?: false) {
+                logi(TAG, "[ OkHttp response is successful ]")
                 try {
                     bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
+                    //addImage(view, bitmap)
                 } catch (e: Exception) {
                     loge(TAG, "[ BitmapFactory decoding image error. " +
-                            "Maybe a stream isn't an image ]")
+                            "The image data could not be decoded ]")
                     e.printStackTrace()
                 }
             }
@@ -113,14 +120,18 @@ object ImageLoader {
     private class ConsumerThread(val executorService: DownloadCompletionService) : Thread() {
 
         override fun run() {
-            logi(TAG, "[ ConsumerThread run() ]")
+            logi(TAG, "[ ConsumerThread: run() ]")
             super.run()
             try {
                 while (!executorService.isTerminated()) {
                     val future = executorService.poll(1, TimeUnit.SECONDS)
+                    logi(TAG, "[ executor.poll() = $future ] ")
                     future?.let {
                         val image = future.get()
                         with(image) {
+                            logi(TAG, "[ ConsumerThread: future.get(): url = $url\n" +
+                                    "view = $view\n" +
+                                    "bitmap = $bitmap ]")
                             if (bitmap != null) {
                                 addImage(view, bitmap)
                                 cache.put(url, bitmap)

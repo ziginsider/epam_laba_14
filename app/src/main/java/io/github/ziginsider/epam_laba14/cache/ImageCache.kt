@@ -14,7 +14,7 @@ class ImageCache(capacity: Int): LruCache<String, Bitmap>(capacity) {
     private val TAG = ImageCache::class.java.simpleName
 
     override fun getValueSize(value: Bitmap): Int {
-        logi(TAG, "[ getValueSize() ]")
+        logi(TAG, "[ getValueSize($value) ]")
         return value.byteCount
     }
 }

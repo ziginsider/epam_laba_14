@@ -36,10 +36,10 @@ open class LruCache<in K, V>(private var capacity: Int = 10) : Cache<K, V> {
             lruMap.remove(oldestValue.key)
             currentCacheSize -= getValueSize(oldestValue.value)
         }
-        logi(TAG, "[ put($key, value): successful ]")
+        logi(TAG, "[ put($key, $value): successful ]")
         true
     } else {
-        logi(TAG, "[ put($key, value): unsuccessful ]")
+        logi(TAG, "[ put($key, $value): unsuccessful ]")
         false
     }
 
