@@ -6,6 +6,8 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
+import io.github.ziginsider.epam_laba14.utils.loge
+import io.github.ziginsider.epam_laba14.utils.logi
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -14,8 +16,11 @@ import java.util.concurrent.*
 
 object ImageLoader {
 
-    //TODO set capacity?
-    private val cache = ImageCache(10)
+    private val TAG = ImageLoader::class.java.simpleName
+
+    private const val DEFAULT_CAPACITY = 10
+
+    private val cache = ImageCache(DEFAULT_CAPACITY)
 
     private var threadCount: Int? = null
 
@@ -24,6 +29,7 @@ object ImageLoader {
                 ?: Runtime.getRuntime().availableProcessors() * 2))
 
     fun displayImage(view: ImageView, url: String) {
+        logi(TAG, "[ displayImage($view, $url) ]")
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
@@ -39,18 +45,22 @@ object ImageLoader {
     }
 
     fun sizeCache(newSize: Int) {
+        logi(TAG, "[ sizeCache($newSize) ]")
         cache.resize(newSize)
     }
 
     fun capacityCache(newCapacity: Int) {
+        logi(TAG, "[ capacityCache($newCapacity) ]")
         cache.setCapacity(newCapacity)
     }
 
     fun threadCount(newCount: Int) {
+        logi(TAG, "[ threadCount($newCount) ]")
         threadCount = newCount
     }
 
     private fun addImage(view: ImageView, bitmap: Bitmap) {
+        logi(TAG, "[ addImage() ]")
         Handler(Looper.getMainLooper()).post {
             view.setImageBitmap(bitmap)
         }
@@ -63,6 +73,7 @@ object ImageLoader {
         }
 
         private fun downloadImage(url: String, view: ImageView): Image {
+            logi(TAG, "[ downloadImage($url, $view) ]")
             val client = OkHttpClient()
             val request = Request.Builder()
                     .url(url)
@@ -72,11 +83,17 @@ object ImageLoader {
             try {
                 response = client.newCall(request).execute()
             } catch (e: IOException) {
+                loge(TAG, "[ OkHttp request execute error ]")
                 e.printStackTrace()
             }
             if (response?.isSuccessful ?: false) {
-                //TODO check
-                bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
+                try {
+                    bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
+                } catch (e: Exception) {
+                    loge(TAG, "[ BitmapFactory decoding image error. " +
+                            "Maybe a stream isn't an image ]")
+                    e.printStackTrace()
+                }
             }
             return Image(view, url, bitmap)
         }
@@ -86,6 +103,7 @@ object ImageLoader {
         : ExecutorCompletionService<Image>(executor) {
 
         fun shutdown() {
+            logi(TAG, "[ task shutdown() ]")
             executor.shutdown()
         }
 
@@ -95,6 +113,7 @@ object ImageLoader {
     private class ConsumerThread(val executorService: DownloadCompletionService) : Thread() {
 
         override fun run() {
+            logi(TAG, "[ ConsumerThread run() ]")
             super.run()
             try {
                 while (!executorService.isTerminated()) {
@@ -106,7 +125,7 @@ object ImageLoader {
                                 addImage(view, bitmap)
                                 cache.put(url, bitmap)
                             } else {
-                                //TODO log that image downloaded unsuccessful
+                                loge(TAG, "[ The image data could not be decoded ]")
                             }
                         }
                     }
