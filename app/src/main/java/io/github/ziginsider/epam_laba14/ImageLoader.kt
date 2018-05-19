@@ -20,9 +20,31 @@ object ImageLoader {
 
     private const val DEFAULT_CAPACITY = 10
 
-    private val cache: ImageCache
-    private var threadCount: Int
-    private var threadPool: DownloadCompletionService
+    private lateinit var cache: ImageCache
+    private lateinit var threadPool: DownloadCompletionService
+    var threadCount = 0
+        set(value) {
+            if (ImageLoader::threadPool.isInitialized) {
+                threadPool.setThreadCount(value)
+            }
+            field = value
+        }
+    var cacheSize: Int = 0
+        set(value) {
+            logi(TAG, "[ sizeCache($value) ]")
+            if (ImageLoader::cache.isInitialized) {
+                cache.resize(value)
+            }
+            field = value
+        }
+    var cacheCapacity: Int = 0
+        set(value) {
+            logi(TAG, "[ capacityCache($value) ]")
+            if (ImageLoader::cache.isInitialized) {
+                cache.setCapacity(value)
+            }
+            field = value
+        }
 
     init {
         logi(TAG, "[init ImageLoader]")
@@ -38,30 +60,12 @@ object ImageLoader {
             val bitmap = cache.get(url)
             if (bitmap == null) {
                 logi(TAG, "[ start image downloading task]")
-                //ConsumerThread(threadPool).start()
                 threadPool.submit(ImageDownloadTask(url, view))
-
-                //cache.put(url, value)
             } else {
                 logi(TAG, "[ add image from cache ]")
                 addImage(view, bitmap)
             }
         }
-    }
-
-    fun sizeCache(newSize: Int) {
-        logi(TAG, "[ sizeCache($newSize) ]")
-        cache.resize(newSize)
-    }
-
-    fun capacityCache(newCapacity: Int) {
-        logi(TAG, "[ capacityCache($newCapacity) ]")
-        cache.setCapacity(newCapacity)
-    }
-
-    fun threadCount(newCount: Int) {
-        logi(TAG, "[ threadCount($newCount) ]")
-        threadCount = newCount
     }
 
     private fun addImage(view: ImageView, bitmap: Bitmap) {
@@ -109,6 +113,10 @@ object ImageLoader {
     private class DownloadCompletionService(private val executor: ExecutorService)
         : ExecutorCompletionService<Image>(executor) {
 
+        fun setThreadCount(newCount: Int) {
+            (executor as ThreadPoolExecutor).corePoolSize = newCount
+        }
+
         fun shutdown() {
             logi(TAG, "[ task shutdown() ]")
             executor.shutdown()
@@ -148,6 +156,4 @@ object ImageLoader {
             }
         }
     }
-
-
 }
