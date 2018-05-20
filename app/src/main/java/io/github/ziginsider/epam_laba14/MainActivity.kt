@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import io.github.ziginsider.epam_laba14.adapter.EndlessScrollListener
 import io.github.ziginsider.epam_laba14.adapter.RecyclerViewAdapter
 import io.github.ziginsider.epam_laba14.model.Photo
 import io.github.ziginsider.epam_laba14.retrofit.Contract.API_KEY
@@ -23,12 +24,13 @@ class MainActivity : AppCompatActivity() {
     private val TAG = MainActivity::class.java.simpleName
 
     private var recyclerAdapter: RecyclerViewAdapter? = null
+    private var offset = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        requestToFlickr(1)
+        requestToFlickr(offset)
 
         logi(TAG, "[ COUNT THREADS = ${ImageLoader.threadCount} ]")
         logi(TAG, "[ COUNT CAPACITY CACHE = ${ImageLoader.cacheCapacity} ]")
@@ -43,6 +45,8 @@ class MainActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@MainActivity)
             setHasFixedSize(true)
             adapter = recyclerAdapter
+            addOnScrollListener(EndlessScrollListener({ pagingPhotos() },
+                    layoutManager as LinearLayoutManager))
         }
     }
 
@@ -62,5 +66,9 @@ class MainActivity : AppCompatActivity() {
                 }, { error ->
                     error.printStackTrace()
                 })
+    }
+
+    private fun pagingPhotos() {
+        requestToFlickr(++offset)
     }
 }
