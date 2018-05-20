@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    response -> response.photos.data
+                    response -> addPhotos(response.photos.data)
                     progressBar.visibility = View.GONE
                 }, { error ->
                     error.printStackTrace()
@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun addPhotos(photos: List<Photo>) {
         val recyclerAdapter = RecyclerViewAdapter(R.layout.item_view, {})
+        recyclerAdapter.submitList(photos)
 
         with (recyclerView) {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -66,7 +67,6 @@ class MainActivity : AppCompatActivity() {
             adapter = recyclerAdapter
         }
 
-        recyclerAdapter.submitList(photos)
 
     }
 }

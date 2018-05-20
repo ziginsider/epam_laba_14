@@ -6,6 +6,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 
 /**
  * Declaration a Retrofit interface for getting recent photos from flickr
@@ -29,8 +30,10 @@ interface RetrofitService {
             val retrofit = Retrofit.Builder()
                     .baseUrl("https://api.flickr.com/")
                     .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build()
             return retrofit.create(RetrofitService::class.java)
         }
     }
+
 }

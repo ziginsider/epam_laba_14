@@ -5,5 +5,5 @@ object Contract {
     const val METHOD = "flickr.photos.getRecent"
     const val FORMAT = "json"
     const val JSON_RAW = 1
-    const val URL_TYPE = "url_c" //url_m ??
+    const val URL_TYPE = "url_n,url_o"
 }
