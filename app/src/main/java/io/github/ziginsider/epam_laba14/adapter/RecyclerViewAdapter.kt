@@ -28,7 +28,11 @@ class RecyclerViewAdapter(private val layoutResId: Int, private val clickListene
         fun bind(photo: Photo, clickListener: (Photo) -> Unit) {
             with(photo) {
                 titlePhoto.text = title
-                ImageLoader.displayImage(imagePhoto, url)
+                if (urlSmall != null) {
+                    ImageLoader.displayImage(imagePhoto, urlSmall)
+                } else if (urlOriginal != null) {
+                    ImageLoader.displayImage(imagePhoto, urlOriginal)
+                }
                 itemView.setOnClickListener { clickListener(this) }
             }
         }
