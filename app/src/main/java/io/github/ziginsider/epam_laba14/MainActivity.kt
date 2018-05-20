@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
-                    setUpRecyclerView(response.photos.data)
+                    updateAdapter(response.photos.data)
                     progressBar.visibility = View.GONE
                 }, { error ->
                     error.printStackTrace()
@@ -54,5 +54,9 @@ class MainActivity : AppCompatActivity() {
             setHasFixedSize(true)
             adapter = recyclerAdapter
         }
+    }
+
+    private fun updateAdapter(photos: List<Photo>) {
+        recyclerAdapter?.submitList(photos) ?: setUpRecyclerView(photos)
     }
 }
