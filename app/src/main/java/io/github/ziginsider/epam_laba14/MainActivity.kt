@@ -28,17 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        progressBar.visibility = View.VISIBLE
-        RetrofitService.create()
-                .recentPhotos(METHOD, API_KEY, FORMAT, 10, 1, JSON_RAW, URL_TYPE)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ response ->
-                    updateAdapter(response.photos.data)
-                    progressBar.visibility = View.GONE
-                }, { error ->
-                    error.printStackTrace()
-                })
+        requestToFlickr(1)
 
         logi(TAG, "[ COUNT THREADS = ${ImageLoader.threadCount} ]")
         logi(TAG, "[ COUNT CAPACITY CACHE = ${ImageLoader.cacheCapacity} ]")
@@ -58,5 +48,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateAdapter(photos: List<Photo>) {
         recyclerAdapter?.submitList(photos) ?: setUpRecyclerView(photos)
+    }
+
+    private fun requestToFlickr(page: Int) {
+        progressBar.visibility = View.VISIBLE
+        RetrofitService.create()
+                .recentPhotos(METHOD, API_KEY, FORMAT, 10, page, JSON_RAW, URL_TYPE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ response ->
+                    updateAdapter(response.photos.data)
+                    progressBar.visibility = View.GONE
+                }, { error ->
+                    error.printStackTrace()
+                })
     }
 }
