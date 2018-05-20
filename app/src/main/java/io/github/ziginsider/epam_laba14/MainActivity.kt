@@ -2,6 +2,8 @@ package io.github.ziginsider.epam_laba14
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import io.github.ziginsider.epam_laba14.retrofit.RetrofitService
 import io.github.ziginsider.epam_laba14.utils.logi
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -28,6 +30,8 @@ class MainActivity : AppCompatActivity() {
 //        ImageLoader.displayImage(imageView5, "http://www.oiseaux.net/photos/jules.fouarge/images/pic.epeiche.jufo.8g.jpg")
 
 
+        progressBar.visibility = View.VISIBLE
+        RetrofitService.create().recentPhotos()
 
 
 

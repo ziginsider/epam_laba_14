@@ -16,7 +16,7 @@ import retrofit2.http.Query
 interface RetrofitService {
 
     @GET("/services/rest")
-    fun recentPhotos(@Query("method") url: String,
+    fun recentPhotos(@Query("method") method: String,
                      @Query("api_key") key: String,
                      @Query("format") format: String,
                      @Query("per_page") count: Int,
