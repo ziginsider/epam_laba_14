@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.item_view.*
 class RecyclerViewAdapter(private val layoutResId: Int, private val clickListener: (Photo) -> Unit)
     : ListAdapter<Photo, RecyclerViewAdapter.ViewHolder>(PhotoDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = parent inflate layoutResId
         return ViewHolder(view)
     }
