@@ -4,9 +4,11 @@ import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import io.github.ziginsider.epam_laba14.ImageLoader
 import io.github.ziginsider.epam_laba14.model.Photo
 import io.github.ziginsider.epam_laba14.utils.inflate
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_view.*
 
 class RecyclerViewAdapter(private val layoutResId: Int, private val clickListener: (Photo) -> Unit)
     : ListAdapter<Photo, RecyclerViewAdapter.ViewHolder>(PhotoDiffCallback()) {
@@ -24,8 +26,11 @@ class RecyclerViewAdapter(private val layoutResId: Int, private val clickListene
         : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(photo: Photo, clickListener: (Photo) -> Unit) {
-
-
+            with(photo) {
+                titlePhoto.text = title
+                ImageLoader.displayImage(imagePhoto, url)
+                itemView.setOnClickListener { clickListener(this) }
+            }
         }
     }
 
