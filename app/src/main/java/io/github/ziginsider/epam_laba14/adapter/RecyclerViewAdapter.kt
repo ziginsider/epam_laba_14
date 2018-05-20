@@ -10,6 +10,14 @@ import io.github.ziginsider.epam_laba14.utils.inflate
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_view.*
 
+/**
+ * Adapter for list of photos [Photo]
+ *
+ * Uses [PhotoDiffCallback] for renew list of items
+ *
+ * @author Alex Kisel
+ * @since 2018-05-15
+ */
 class RecyclerViewAdapter(private val layoutResId: Int, private val clickListener: (Photo) -> Unit)
     : ListAdapter<Photo, RecyclerViewAdapter.ViewHolder>(PhotoDiffCallback()) {
 
@@ -37,5 +45,4 @@ class RecyclerViewAdapter(private val layoutResId: Int, private val clickListene
             }
         }
     }
-
 }

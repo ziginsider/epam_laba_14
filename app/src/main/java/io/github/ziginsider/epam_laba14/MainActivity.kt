@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = MainActivity::class.java.simpleName
 
-    private val recyclerViewAdapter: RecyclerViewAdapter? = null
+    private var recyclerAdapter: RecyclerViewAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
-                    addPhotos(response.photos.data)
+                    setUpRecyclerView(response.photos.data)
                     progressBar.visibility = View.GONE
                 }, { error ->
                     error.printStackTrace()
@@ -45,16 +45,14 @@ class MainActivity : AppCompatActivity() {
         logi(TAG, "[ SIZE CACHE = ${ImageLoader.cacheSize} ]")
     }
 
-    private fun addPhotos(photos: List<Photo>) {
-        val recyclerAdapter = RecyclerViewAdapter(R.layout.item_view,
+    private fun setUpRecyclerView(photos: List<Photo>) {
+        recyclerAdapter = RecyclerViewAdapter(R.layout.item_view,
                 { toast("I'm photo with title = ${it.title}") })
-        recyclerAdapter.submitList(photos)
+        recyclerAdapter?.submitList(photos)
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainActivity)
             setHasFixedSize(true)
             adapter = recyclerAdapter
         }
-
-
     }
 }
