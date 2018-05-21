@@ -22,9 +22,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val TAG = MainActivity::class.java.simpleName
+    private val MAX_LOAD_PAGES_COUNT = 10
+    private val COUNT_PAGES_PER_REQUEST = 100
 
     private var recyclerAdapter: RecyclerViewAdapter? = null
-    private var offset = 1
+    private var offset = MAX_LOAD_PAGES_COUNT
+    private var listPhotos: List<Photo> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpRecyclerView(photos: List<Photo>) {
         recyclerAdapter = RecyclerViewAdapter(R.layout.item_view,
-                { toast("I'm photo with title = ${it.title}") })
+                { toast("I'm photo with title = ${it.title}, id = ${it.id}") })
         recyclerAdapter?.submitList(photos)
         with(recyclerView) {
             layoutManager = LinearLayoutManager(this@MainActivity)
@@ -57,11 +60,13 @@ class MainActivity : AppCompatActivity() {
     private fun requestToFlickr(page: Int) {
         progressBar.visibility = View.VISIBLE
         RetrofitService.create()
-                .recentPhotos(METHOD, API_KEY, FORMAT, 10, page, JSON_RAW, URL_TYPE)
+                .recentPhotos(METHOD, API_KEY, FORMAT, COUNT_PAGES_PER_REQUEST, page, JSON_RAW,
+                        URL_TYPE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ response ->
-                    updateAdapter(response.photos.data)
+                    listPhotos += response.photos.data
+                    updateAdapter(listPhotos)
                     progressBar.visibility = View.GONE
                 }, { error ->
                     error.printStackTrace()
@@ -69,6 +74,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun pagingPhotos() {
-        requestToFlickr(++offset)
+        if (offset > 1) {
+            requestToFlickr(--offset)
+        } else {
+            toast("The limit of photos is reached...")
+        }
     }
 }

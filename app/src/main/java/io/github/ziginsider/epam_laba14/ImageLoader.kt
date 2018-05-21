@@ -99,7 +99,6 @@ object ImageLoader {
                 logi(TAG, "[ OkHttp response is successful ]")
                 try {
                     bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
-                    //addImage(view, bitmap)
                 } catch (e: Exception) {
                     loge(TAG, "[ BitmapFactory decoding image error. " +
                             "The image data could not be decoded ]")

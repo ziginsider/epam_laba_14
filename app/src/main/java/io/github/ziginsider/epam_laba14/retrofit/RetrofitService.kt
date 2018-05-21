@@ -11,7 +11,7 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 /**
  * Declaration a Retrofit interface for getting recent photos from flickr
  *
- * @since 2018-04-10
+ * @since 2018-05-10
  * @author Alex Kisel
  */
 interface RetrofitService {
