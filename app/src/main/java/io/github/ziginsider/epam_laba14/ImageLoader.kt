@@ -8,6 +8,7 @@ import android.widget.ImageView
 import io.github.ziginsider.epam_laba14.cache.ImageCache
 import io.github.ziginsider.epam_laba14.utils.loge
 import io.github.ziginsider.epam_laba14.utils.logi
+import io.github.ziginsider.epam_laba14.utils.resize
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -18,7 +19,7 @@ object ImageLoader {
 
     private val TAG = ImageLoader::class.java.simpleName
 
-    private const val DEFAULT_CACHE_CAPACITY = 10
+    private const val DEFAULT_CACHE_CAPACITY = 100
 
     private lateinit var cache: ImageCache
     private lateinit var threadPool: DownloadCompletionService
@@ -49,7 +50,9 @@ object ImageLoader {
     init {
         logi(TAG, "[init ImageLoader]")
         cache = ImageCache(DEFAULT_CACHE_CAPACITY)
-        cacheCapacity
+        cacheCapacity = DEFAULT_CACHE_CAPACITY
+        cacheSize = cacheCapacity * 1024 * 1024
+        cache.resize(cacheSize)
         threadCount = Runtime.getRuntime().availableProcessors() * 2
         threadPool = DownloadCompletionService(Executors.newFixedThreadPool(threadCount))
         ConsumerThread(threadPool).start()
@@ -100,8 +103,12 @@ object ImageLoader {
                 logi(TAG, "[ OkHttp response is successful ]")
                 try {
                     bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
-                    if (cacheSize / cacheCapacity < bitmap?.byteCount!!) {
-
+                    bitmap?.let {
+                        if (cacheSize / cacheCapacity < it.byteCount) {
+                            logi(TAG, "[ old size = ${it.byteCount}  ]")
+                            bitmap = it.resize(it.width / 2, it.height / 2)
+                            logi(TAG, "[ new size ${bitmap?.byteCount}]")
+                        }
                     }
                 } catch (e: Exception) {
                     loge(TAG, "[ BitmapFactory decoding image error. " +

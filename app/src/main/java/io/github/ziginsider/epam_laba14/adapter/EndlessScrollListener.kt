@@ -3,6 +3,14 @@ package io.github.ziginsider.epam_laba14.adapter
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 
+/**
+ * An implementation of endless scroll listener for the list of [RecyclerViewAdapter].
+ *
+ * Uses [func] for actions after reaching the end of the list.
+ *
+ * @author Alex Kisel
+ * @since 2018-05-21
+ */
 class EndlessScrollListener(val func: () -> Unit, val layoutManager: LinearLayoutManager)
     : RecyclerView.OnScrollListener() {
 
