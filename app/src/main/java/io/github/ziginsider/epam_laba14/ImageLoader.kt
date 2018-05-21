@@ -18,7 +18,7 @@ object ImageLoader {
 
     private val TAG = ImageLoader::class.java.simpleName
 
-    private const val DEFAULT_CAPACITY = 10
+    private const val DEFAULT_CACHE_CAPACITY = 10
 
     private lateinit var cache: ImageCache
     private lateinit var threadPool: DownloadCompletionService
@@ -48,7 +48,8 @@ object ImageLoader {
 
     init {
         logi(TAG, "[init ImageLoader]")
-        cache = ImageCache(DEFAULT_CAPACITY)
+        cache = ImageCache(DEFAULT_CACHE_CAPACITY)
+        cacheCapacity
         threadCount = Runtime.getRuntime().availableProcessors() * 2
         threadPool = DownloadCompletionService(Executors.newFixedThreadPool(threadCount))
         ConsumerThread(threadPool).start()

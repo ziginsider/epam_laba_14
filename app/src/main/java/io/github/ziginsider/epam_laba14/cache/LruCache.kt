@@ -76,12 +76,6 @@ open class LruCache<in K, V>(private var capacity: Int = 10) : Cache<K, V> {
         }
     }
 
-    override fun getCurrentSize() = currentCacheSize
-
-    override fun getMaxSize() = maxCacheSize
-
-    override fun getCapacity() = capacity
-
     /**
      * Gets [value] size in bytes
      */
