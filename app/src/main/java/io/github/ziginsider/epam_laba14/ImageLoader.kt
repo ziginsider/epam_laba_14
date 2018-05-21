@@ -15,6 +15,24 @@ import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.*
 
+/**
+ * Implements a simple image loader
+ *
+ * The image loader implements the cache [ImageCache] for storing downloaded images
+ *
+ * Image download tasks [ImageDownloadTask] are placed in [threadPool], which is an implementation
+ * of [DownloadCompletionService]. The [threadPool] downloads images on the URL and puts answers
+ * [Image] in the [BlockingQueue] that is monitoring by [ConsumerThread].
+ * [ConsumerThread] places downloaded image asynchronously into container view and puts it into
+ * cache.
+ *
+ * @property threadCount number of threads for [DownloadCompletionService]
+ * @property cacheSize cache size [ImageCache] in bytes
+ * @property cacheCapacity cache capacity (number of elements)
+ *
+ * @author Alex Kisel
+ * @since 2018-05-19
+ */
 object ImageLoader {
 
     private val TAG = ImageLoader::class.java.simpleName
@@ -58,6 +76,12 @@ object ImageLoader {
         ConsumerThread(threadPool).start()
     }
 
+    /**
+     * Downloads an image on the specified url and puts it in the view container
+     *
+     * @param view view container for image
+     * @param url image url
+     */
     fun displayImage(view: ImageView, url: String) {
         logi(TAG, "[ displayImage($view, $url) ]")
         synchronized(cache) {

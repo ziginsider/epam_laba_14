@@ -19,6 +19,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 
+/**
+ * Сontains a RecyclerView list (see [RecyclerViewAdapter]) with endless scroll listener
+ * (see [EndlessScrollListener])
+ *
+ * The list loads recent photos from api.flickr.com
+ *
+ * Uploading images is done using [ImageLoader]
+ *
+ * @author Alex Kisel
+ * @since 2018-05-19
+ */
 class MainActivity : AppCompatActivity() {
 
     private val TAG = MainActivity::class.java.simpleName

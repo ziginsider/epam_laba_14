@@ -9,7 +9,7 @@ import retrofit2.http.Query
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 
 /**
- * Declaration a Retrofit interface for getting recent photos from flickr
+ * Declaration a Retrofit interface for getting recent photos from api.flickr.com
  *
  * @since 2018-05-10
  * @author Alex Kisel
@@ -35,5 +35,4 @@ interface RetrofitService {
             return retrofit.create(RetrofitService::class.java)
         }
     }
-
 }
