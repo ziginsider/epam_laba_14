@@ -13,7 +13,9 @@ import io.github.ziginsider.epam_laba14.retrofit.Contract.JSON_RAW
 import io.github.ziginsider.epam_laba14.retrofit.Contract.METHOD
 import io.github.ziginsider.epam_laba14.retrofit.Contract.URL_TYPE
 import io.github.ziginsider.epam_laba14.retrofit.RetrofitService
+import io.github.ziginsider.epam_laba14.utils.hide
 import io.github.ziginsider.epam_laba14.utils.logi
+import io.github.ziginsider.epam_laba14.utils.show
 import io.github.ziginsider.epam_laba14.utils.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -67,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestToFlickr(page: Int) {
-        progressBar.visibility = View.VISIBLE
+        progressBar.show()
         RetrofitService.create()
                 .recentPhotos(METHOD, API_KEY, FORMAT, COUNT_PAGES_PER_REQUEST, page, JSON_RAW,
                         URL_TYPE)
@@ -76,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 .subscribe({ response ->
                     listPhotos += response.photos.data
                     updateAdapter(listPhotos)
-                    progressBar.visibility = View.GONE
+                    progressBar.hide()
                 }, { error ->
                     error.printStackTrace()
                 })

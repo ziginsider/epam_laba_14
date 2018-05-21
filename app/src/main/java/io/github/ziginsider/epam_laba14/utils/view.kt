@@ -2,7 +2,22 @@ package io.github.ziginsider.epam_laba14.utils
 
 import android.graphics.Bitmap
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+
+/**
+ * Extension for View. Sets visibility [View.VISIBLE]
+ */
+fun View.show() {
+    visibility = View.VISIBLE
+}
+
+/**
+ * Extension for View. Sets visibility [View.GONE]
+ */
+fun View.hide() {
+    visibility = View.GONE
+}
 
 /**
  * Extension for ViewGroup.
