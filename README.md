@@ -1,9 +1,14 @@
 # epam_laba_14
 Simple Image Loader for Android
 
-## Demo work
+## Demo work && screenshots
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/VV747h6uh6I" frameborder="0" allowfullscreen></iframe>
+see [video](https://youtu.be/VV747h6uh6I)
+
+<img alt="img1" src="img/img1.png">
+
+<br>
+<img alt="img2" src="mmg/img2.png">
 
 ## Принцип работы
 
