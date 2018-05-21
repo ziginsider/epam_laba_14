@@ -21,7 +21,7 @@ import java.util.concurrent.*
  * The image loader implements the cache [ImageCache] for storing downloaded images
  *
  * Image download tasks [ImageDownloadTask] are placed in [threadPool], which is an implementation
- * of [DownloadCompletionService]. The [threadPool] downloads images on the URL and puts answers
+ * of [ExecutorCompletionService]. The [threadPool] downloads images on the URL and puts answers
  * [Image] in the [BlockingQueue] that is monitoring by [ConsumerThread].
  * [ConsumerThread] places downloaded image asynchronously into container view and puts it into
  * cache.
