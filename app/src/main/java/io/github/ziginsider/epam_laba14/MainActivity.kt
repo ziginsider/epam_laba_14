@@ -45,6 +45,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        //ImageLoader.cacheCapacity = 98
+        //ImageLoader.threadCount = 7
         requestToFlickr(offset)
         logi(TAG, "[ COUNT THREADS = ${ImageLoader.threadCount} ]")
         logi(TAG, "[ COUNT CAPACITY CACHE = ${ImageLoader.cacheCapacity} ]")

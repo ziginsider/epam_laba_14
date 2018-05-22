@@ -39,40 +39,33 @@ object ImageLoader {
 
     private const val DEFAULT_CACHE_CAPACITY = 100
 
-    private lateinit var cache: ImageCache
-    private lateinit var threadPool: DownloadCompletionService
-    var threadCount = 0
+    private var cache = ImageCache(DEFAULT_CACHE_CAPACITY)
+    private val threadCountInit = Runtime.getRuntime().availableProcessors() * 2
+    private var threadPool
+            = DownloadCompletionService(Executors.newFixedThreadPool(threadCountInit))
+
+    var threadCount = threadCountInit
         set(value) {
-            if (ImageLoader::threadPool.isInitialized) {
-                threadPool.setThreadCount(value)
-            }
+            threadPool.setThreadCount(value)
             field = value
         }
-    var cacheSize: Int = 0
-        set(value) {
-            logi(TAG, "[ sizeCache($value) ]")
-            if (ImageLoader::cache.isInitialized) {
-                cache.resize(value)
-            }
-            field = value
-        }
-    var cacheCapacity: Int = 0
+
+    var cacheCapacity = DEFAULT_CACHE_CAPACITY
         set(value) {
             logi(TAG, "[ capacityCache($value) ]")
-            if (ImageLoader::cache.isInitialized) {
-                cache.setCapacity(value)
-            }
+            cache.setCapacity(value)
+            field = value
+        }
+
+    var cacheSize: Int = cacheCapacity * 1024 * 1024
+        set(value) {
+            logi(TAG, "[ sizeCache($value) ]")
+            cache.resize(value)
             field = value
         }
 
     init {
-        logi(TAG, "[init ImageLoader]")
-        cache = ImageCache(DEFAULT_CACHE_CAPACITY)
-        cacheCapacity = DEFAULT_CACHE_CAPACITY
-        cacheSize = cacheCapacity * 1024 * 1024
-        cache.resize(cacheSize)
-        threadCount = Runtime.getRuntime().availableProcessors() * 2
-        threadPool = DownloadCompletionService(Executors.newFixedThreadPool(threadCount))
+        logi(TAG, "[init: start ConsumerThread ]")
         ConsumerThread(threadPool).start()
     }
 
