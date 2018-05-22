@@ -8,7 +8,7 @@ import io.github.ziginsider.epam_laba14.utils.logi
  * @author Alex Kisel
  * @since 2018-05-03
  */
-open class LruCache<in K, V>(private var capacity: Int = 10) : Cache<K, V> {
+open class LruCache<in K, V>(capacity: Int = 10) : Cache<K, V> {
 
     private val TAG = LruCache::class.java.simpleName
 
