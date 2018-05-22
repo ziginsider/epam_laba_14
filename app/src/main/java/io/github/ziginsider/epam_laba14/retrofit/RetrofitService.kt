@@ -26,6 +26,7 @@ interface RetrofitService {
                      @Query("extras") extras: String): Observable<RecentPhotos>
 
     companion object {
+
         fun create(): RetrofitService {
             val retrofit = Retrofit.Builder()
                     .baseUrl("https://api.flickr.com/")

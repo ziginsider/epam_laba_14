@@ -7,6 +7,7 @@ package io.github.ziginsider.epam_laba14.cache
  * @since 2018-05-03
  */
 interface Cache<in K, V> {
+
     /**
      * Puts an value in the cache for [key]
      *
