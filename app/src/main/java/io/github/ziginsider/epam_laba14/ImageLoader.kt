@@ -41,8 +41,7 @@ object ImageLoader {
 
     private var cache = ImageCache(DEFAULT_CACHE_CAPACITY)
     private val threadCountInit = Runtime.getRuntime().availableProcessors() * 2
-    private var threadPool
-            = DownloadCompletionService(Executors.newFixedThreadPool(threadCountInit))
+    private var threadPool = DownloadCompletionService(Executors.newFixedThreadPool(threadCountInit))
 
     var threadCount = threadCountInit
         set(value) {
@@ -118,19 +117,21 @@ object ImageLoader {
             }
             if (response?.isSuccessful ?: false) {
                 logi(TAG, "[ OkHttp response is successful ]")
-                try {
-                    bitmap = BitmapFactory.decodeStream(response?.body()?.byteStream())
-                    bitmap?.let {
-                        if (cacheSize / cacheCapacity < it.byteCount) {
-                            logi(TAG, "[ old size = ${it.byteCount}  ]")
-                            bitmap = it.resize(it.width / 2, it.height / 2)
-                            logi(TAG, "[ new size ${bitmap?.byteCount}]")
+                response.use {
+                    try {
+                        bitmap = BitmapFactory.decodeStream(it?.body()?.byteStream())
+                        bitmap?.let {
+                            if (cacheSize / cacheCapacity < it.byteCount) {
+                                logi(TAG, "[ old size = ${it.byteCount}  ]")
+                                bitmap = it.resize(it.width / 2, it.height / 2)
+                                logi(TAG, "[ new size ${bitmap?.byteCount}]")
+                            }
                         }
+                    } catch (e: Exception) {
+                        loge(TAG, "[ BitmapFactory decoding image error. " +
+                                "The image data could not be decoded ]")
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    loge(TAG, "[ BitmapFactory decoding image error. " +
-                            "The image data could not be decoded ]")
-                    e.printStackTrace()
                 }
             }
             return Image(view, url, bitmap)
