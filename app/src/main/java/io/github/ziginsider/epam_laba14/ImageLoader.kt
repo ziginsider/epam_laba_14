@@ -63,6 +63,9 @@ object ImageLoader {
             field = value
         }
 
+    val optimalImageSize: Int? = null
+        get() = field ?: cacheSize / cacheCapacity
+
     init {
         logi(TAG, "[init: start ConsumerThread ]")
         ConsumerThread(threadPool).start()
@@ -76,6 +79,7 @@ object ImageLoader {
      */
     fun displayImage(view: ImageView, url: String) {
         logi(TAG, "[ displayImage($view, $url) ]")
+        //view.setImageBitmap(null)
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
@@ -115,13 +119,13 @@ object ImageLoader {
                 loge(TAG, "[ OkHttp request execute error ]")
                 e.printStackTrace()
             }
-            if (response?.isSuccessful ?: false) {
+            if (response?.isSuccessful == true) {
                 logi(TAG, "[ OkHttp response is successful ]")
                 response.use {
                     try {
                         bitmap = BitmapFactory.decodeStream(it?.body()?.byteStream())
                         bitmap?.let {
-                            if (cacheSize / cacheCapacity < it.byteCount) {
+                            if (optimalImageSize!! < it.byteCount) {
                                 logi(TAG, "[ old size = ${it.byteCount}  ]")
                                 bitmap = it.resize(it.width / 2, it.height / 2)
                                 logi(TAG, "[ new size ${bitmap?.byteCount}]")
@@ -160,7 +164,7 @@ object ImageLoader {
             super.run()
             try {
                 while (!executorService.isTerminated()) {
-                    val future = executorService.poll(1, TimeUnit.SECONDS)
+                    val future = executorService.poll()
                     logi(TAG, "[ executor.poll() = $future ] ")
                     future?.let {
                         val image = future.get()
