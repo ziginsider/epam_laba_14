@@ -66,6 +66,8 @@ object ImageLoader {
     val optimalImageSize: Int? = null
         get() = field ?: cacheSize / cacheCapacity
 
+    private val repeatHashMap: HashMap<String, String> = HashMap(16)
+
     init {
         logi(TAG, "[init: start ConsumerThread ]")
         ConsumerThread(threadPool).start()
@@ -79,23 +81,26 @@ object ImageLoader {
      */
     fun displayImage(view: ImageView, url: String) {
         logi(TAG, "[ displayImage($view, $url) ]")
-        //view.setImageBitmap(null)
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
                 logi(TAG, "[ start image downloading task]")
+                view.setImageBitmap(null)
+                repeatHashMap[view.layoutParams.toString()] = url
                 threadPool.submit(ImageDownloadTask(url, view))
             } else {
                 logi(TAG, "[ add image from cache ]")
-                addImage(view, bitmap)
+                view.setImageBitmap(bitmap)
             }
         }
     }
 
-    private fun addImage(view: ImageView, bitmap: Bitmap) {
+    private fun addImage(view: ImageView, bitmap: Bitmap, url: String) {
         logi(TAG, "[ addImage($view, $bitmap) ]")
-        Handler(Looper.getMainLooper()).post {
-            view.setImageBitmap(bitmap)
+        if (repeatHashMap[view.layoutParams.toString()] == url) {
+            Handler(Looper.getMainLooper()).post {
+                view.setImageBitmap(bitmap)
+            }
         }
     }
 
@@ -165,7 +170,7 @@ object ImageLoader {
             try {
                 while (!executorService.isTerminated()) {
                     val future = executorService.poll()
-                    logi(TAG, "[ executor.poll() = $future ] ")
+                    //logi(TAG, "[ executor.poll() = $future ] ")
                     future?.let {
                         val image = future.get()
                         with(image) {
@@ -173,7 +178,7 @@ object ImageLoader {
                                     "view = $view\n" +
                                     "bitmap = $bitmap ]")
                             if (bitmap != null) {
-                                addImage(view, bitmap)
+                                addImage(view, bitmap, url)
                                 cache.put(url, bitmap)
                             } else {
                                 loge(TAG, "[ The image data could not be decoded ]")
