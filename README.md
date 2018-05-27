@@ -1,9 +1,9 @@
 # epam_laba_14
 Simple Image Loader for Android
 
-## Demo work && screenshots
+see [video](https://youtu.be/MDrmUoquNq0)
 
-see [video](https://youtu.be/VV747h6uh6I)
+## Demo work && screenshots
 
 <img alt="img1" src="img/img1.png">
 
@@ -12,6 +12,8 @@ see [video](https://youtu.be/VV747h6uh6I)
 Для тестирования изображения загружаются в RecyclerView. Сссылки (url) загружаемых изображений берутся с api.flickr.com (flickr.photos.getRecent) 
 
 ### ImageLoader
+
+*UPD 26.05.2018* - добавлен HashMap для хранения актуального url для view (для правильной работы с переиспользованием view внутри списков) 
 
 [ImageLoader.kt](https://github.com/ziginsider/epam_laba_14/blob/develop/app/src/main/java/io/github/ziginsider/epam_laba14/ImageLoader.kt)
 
