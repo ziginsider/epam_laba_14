@@ -38,6 +38,7 @@ object ImageLoader {
     private val TAG = ImageLoader::class.java.simpleName
 
     private const val DEFAULT_CACHE_CAPACITY = 100
+    private const val DEFAULT_REPEAT_MAP_CAPACITY = 16
 
     private var cache = ImageCache(DEFAULT_CACHE_CAPACITY)
     private val threadCountInit = Runtime.getRuntime().availableProcessors() * 2
@@ -66,7 +67,7 @@ object ImageLoader {
     val optimalImageSize: Int? = null
         get() = field ?: cacheSize / cacheCapacity
 
-    private val repeatHashMap: HashMap<String, String> = HashMap(16)
+    private val repeatHashMap: HashMap<String, String> = HashMap(DEFAULT_REPEAT_MAP_CAPACITY)
 
     init {
         logi(TAG, "[init: start ConsumerThread ]")
@@ -80,7 +81,7 @@ object ImageLoader {
      * @param url image url
      */
     fun displayImage(view: ImageView, url: String) {
-        logi(TAG, "[ displayImage($view, $url) ]")
+        logi(TAG, "[ displayImage($view, $url) ==== ${view.layoutParams}]")
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
