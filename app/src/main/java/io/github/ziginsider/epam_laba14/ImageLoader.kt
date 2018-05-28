@@ -70,7 +70,7 @@ object ImageLoader {
     private val repeatHashMap: HashMap<String, String> = HashMap(DEFAULT_REPEAT_MAP_CAPACITY)
 
     init {
-        logi(TAG, "[init: start ConsumerThread ]")
+        logi(TAG, "[ init: start ConsumerThread ]")
         ConsumerThread(threadPool).start()
     }
 
@@ -81,11 +81,11 @@ object ImageLoader {
      * @param url image url
      */
     fun displayImage(view: ImageView, url: String) {
-        logi(TAG, "[ displayImage($view, $url) ==== ${view.layoutParams}]")
+        logi(TAG, "[ displayImage($view, $url) with unique id = ${view.layoutParams} ]")
         synchronized(cache) {
             val bitmap = cache.get(url)
             if (bitmap == null) {
-                logi(TAG, "[ start image downloading task]")
+                logi(TAG, "[ start image downloading task ]")
                 view.setImageBitmap(null)
                 repeatHashMap[view.layoutParams.toString()] = url
                 threadPool.submit(ImageDownloadTask(url, view))
@@ -132,9 +132,9 @@ object ImageLoader {
                         bitmap = BitmapFactory.decodeStream(it?.body()?.byteStream())
                         bitmap?.let {
                             if (optimalImageSize!! < it.byteCount) {
-                                logi(TAG, "[ old size = ${it.byteCount}  ]")
+                                logi(TAG, "[ old size = ${it.byteCount} ]")
                                 bitmap = it.resize(it.width / 2, it.height / 2)
-                                logi(TAG, "[ new size ${bitmap?.byteCount}]")
+                                logi(TAG, "[ new size ${bitmap?.byteCount} ]")
                             }
                         }
                     } catch (e: Exception) {
@@ -156,7 +156,7 @@ object ImageLoader {
         }
 
         fun shutdown() {
-            logi(TAG, "[ task shutdown() ]")
+            logi(TAG, "[ task shutdown( ]")
             executor.shutdown()
         }
 
