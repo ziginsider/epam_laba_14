@@ -129,7 +129,7 @@ object ImageLoader {
                 logi(TAG, "[ OkHttp response is successful ]")
                 response.use {
                     try {
-                        bitmap = BitmapFactory.decodeStream(it?.body()?.byteStream())
+                        bitmap = BitmapFactory.decodeStream(it.body()?.byteStream())
                         bitmap?.let {
                             if (optimalImageSize!! < it.byteCount) {
                                 logi(TAG, "[ old size = ${it.byteCount} ]")
