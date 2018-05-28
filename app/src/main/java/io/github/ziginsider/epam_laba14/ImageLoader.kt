@@ -156,7 +156,7 @@ object ImageLoader {
         }
 
         fun shutdown() {
-            logi(TAG, "[ task shutdown( ]")
+            logi(TAG, "[ task shutdown() ]")
             executor.shutdown()
         }
 

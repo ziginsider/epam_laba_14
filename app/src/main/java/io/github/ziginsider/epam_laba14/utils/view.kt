@@ -24,11 +24,11 @@ fun View.hide() {
  *
  * @return Inflated View
  */
-infix fun ViewGroup.inflate(layoutResId: Int) =
+infix fun ViewGroup.inflate(layoutResId: Int): View =
         LayoutInflater.from(context).inflate(layoutResId, this, false)
 
 /**
  * Extension for Bitmap. Scales bitmap to new width and height
  */
-fun Bitmap.resize(newWidth: Int, newHeight: Int)
+fun Bitmap.resize(newWidth: Int, newHeight: Int): Bitmap
         = Bitmap.createScaledBitmap(this, newWidth, newHeight, true)

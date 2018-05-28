@@ -3,7 +3,6 @@ package io.github.ziginsider.epam_laba14
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
 import io.github.ziginsider.epam_laba14.adapter.EndlessScrollListener
 import io.github.ziginsider.epam_laba14.adapter.RecyclerViewAdapter
 import io.github.ziginsider.epam_laba14.model.Photo
